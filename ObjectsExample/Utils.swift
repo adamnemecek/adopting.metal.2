@@ -26,14 +26,14 @@ class Camera
 	fileprivate var _direction : vector_float3
 	var direction : vector_float3
 	{
-		set { _direction = vector_normalize(newValue); _needsMatrixUpdate = true }
+		set { _direction = normalize(newValue); _needsMatrixUpdate = true }
 		get { return _direction }
 	}
 	
 	fileprivate var _up : vector_float3
 	var up : vector_float3
 	{
-		set { _up = vector_normalize(newValue); _needsMatrixUpdate = true }
+		set { _up = normalize(newValue); _needsMatrixUpdate = true }
 		get { return _up }
 	}
 	
@@ -108,12 +108,12 @@ func createPlane(_ device : MTLDevice) -> (MTLBuffer, Int)
     
     let length = verts.count*MemoryLayout<CFloat>.size
 	
-    let geoBuffer = device.makeBuffer(length: length, options: MTLResourceOptions.storageModeManaged)
+    let geoBuffer = device.makeBuffer(length: length, options: MTLResourceOptions.storageModeManaged)!
 
     let geoPtr = geoBuffer.contents().bindMemory(to: CFloat.self, capacity: length)
     
 	geoPtr.assign(from: &verts, count: verts.count)
-	geoBuffer.didModifyRange(NSMakeRange(0, verts.count*MemoryLayout<Float>.size))
+    geoBuffer.didModifyRange(0..<verts.count*MemoryLayout<Float>.size)
 	
 	return (geoBuffer, verts.count / 4)
 }
@@ -164,12 +164,12 @@ func createCube(_ device : MTLDevice) -> (MTLBuffer, MTLBuffer?, Int, Int)
 									]
     
     let length = verts.count*MemoryLayout<CFloat>.size
-	let geoBuffer = device.makeBuffer(length: length, options: MTLResourceOptions.storageModeManaged)
+	let geoBuffer = device.makeBuffer(length: length, options: MTLResourceOptions.storageModeManaged)!
     
     let geoPtr = geoBuffer.contents().bindMemory(to: CFloat.self, capacity: length)
     
 	geoPtr.assign(from: &verts, count: verts.count)
-	geoBuffer.didModifyRange(NSMakeRange(0, verts.count*MemoryLayout<Float>.size))
+    geoBuffer.didModifyRange(0..<verts.count*MemoryLayout<Float>.size)
 	
 	return (geoBuffer, nil, 0, verts.count/6)
 }
